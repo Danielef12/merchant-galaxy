@@ -3,14 +3,15 @@ from merchant_galaxy.roman_numbers import RomanNumbers
 
 class Parser:
     """Parses alien language definitions and answers user questions."""
-    def __init__(self)->None:
+
+    def __init__(self, alien_definitions: list, metal_definitions: list, questions_value: list, questions_credit: list):
         """Initialize the parser and load all data from the input file."""
-        self.data = read_from_file("input.txt")
+        self.alien_definitions = alien_definitions
+        self.metal_definitions = metal_definitions
+        self.question_value = questions_value
+        self.question_credit = questions_credit
         self.alien_value: dict = self._get_alien_to_roman_value()
         self.metal_value: dict = self._get_metal_value()
-        self.question_credit: list = self.data["question_credit"]
-        self.question_value: list = self.data["question_value"]
-
     def _get_alien_to_roman_value(self) -> dict[str, str]:
         """Build a mapping between alien words and Roman numerals.
 
@@ -22,7 +23,7 @@ class Parser:
 
                 """
         alien_dict = {}
-        alien_words = self.data["alien_definition"]
+        alien_words = self.alien_definitions
         for item in alien_words:
             splitter = item.split(" is ")
             if splitter[1] in RomanNumbers.VALUES.keys():
@@ -38,7 +39,7 @@ class Parser:
 
                 """
         dict_metal_credit: dict[str, float] = {}
-        metal_words = self.data["metal_definition"]
+        metal_words = self.metal_definitions
         for item in metal_words:
             splitter = item.split(" is ")
 
@@ -83,6 +84,7 @@ class Parser:
                     temp= phrase.strip("?").split(" is ")
 
                     temp_1 = temp[1].strip().split(" ")
+
                     alien_sequence = temp_1
                     print(f"{' '.join(alien_sequence)} is {self._alien_to_number(alien_sequence)}")
                 except (KeyError, IndexError):
@@ -91,7 +93,9 @@ class Parser:
             for phrase in self.question_credit:
                 try:
                     temp= phrase.strip("?").split(" is ")
+
                     temp_1 = temp[1].strip().split(" ")
+
                     alien_sequence = []
                     metal_name = None
                     for element in temp_1:
@@ -99,6 +103,7 @@ class Parser:
                             metal_name = element
                         else:
                             alien_sequence.append(element)
+
                     print (f"{' '.join(alien_sequence)} {metal_name} is {self._alien_to_number(alien_sequence) * self.metal_value[metal_name]} Credits.")
                 except (KeyError, IndexError):
                     print("I have no idea what are you talking about.")
